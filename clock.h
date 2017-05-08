@@ -25,10 +25,16 @@ private:
 	unsigned int milli_;
 
 public:
+	/** Construtor padrão.
+	 *
+	 */
+	Clock() {
+		milli_ = 0;
+	}
 	/** Construtor.
 	 * \param milli tempo em milissegundos.
 	 */
-	Clock(unsigned int milli = 0) {
+	Clock(unsigned int milli) {
 		milli_ = milli % MILLIS_IN_DAY;
 	}
 
@@ -54,17 +60,27 @@ public:
 	 * \param milli inteiro com sinal a adicionar.
 	 * \return tipo Clock com o valor de tempo resultante.
 	 */
-	Clock addMilli (int milli) {
+	Clock operator+ (int milli) {
+		Clock c =  *(new Clock (milli));
 		milli = milli % MILLIS_IN_DAY;
-		milli_ += milli;
-		milli_ = milli_ % MILLIS_IN_DAY;
+		c.milli_ = (milli + milli_) % MILLIS_IN_DAY;
+		return c;
+
+	}
+
+	Clock operator-(int milli) {
+		return *this + (-milli);
 	}
 
 	/** Soma dois Clocks.
 	 *
 	 */
 	Clock operator+ (Clock other) {
-		return this->addMilli(other.milli_);
+		unsigned int a, b, sum;
+		a = this->milli_;
+		b = other.milli_;
+		sum = (a + b) % MILLIS_IN_DAY;
+		return *(new Clock(sum));
 	}
 
 };

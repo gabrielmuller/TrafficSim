@@ -1,4 +1,8 @@
+#ifndef CAR_CPP_
+#define CAR_CPP_
+
 #include <cstdlib>
+#include <string>
 
 class Car {
 
@@ -13,4 +17,10 @@ public:
 	int size() {
 		return size_;
 	}
+
+	std::string name() {
+		return "Relampogos McDonalds";
+	}
 };
+
+#endif

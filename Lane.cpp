@@ -1,3 +1,6 @@
+#ifndef LANE_CPP_
+#define LANE_CPP_
+
 #include <Car.cpp>
 #include "linked_queue.h"
 
@@ -6,6 +9,11 @@ private:
 	structures::LinkedQueue<Car> queue;
 	int velocity_, size_, freeSpace_;
 public:
+	Lane() {
+		velocity_ = 0;
+		size_ = 0;
+		freeSpace_ = 0;
+	}
 	Lane(int velocity, int size) {
 		velocity_ = velocity;
 		size_ = size;
@@ -27,6 +35,10 @@ public:
 	bool empty() {
 		return queue.empty();
 	}
+
+	std::string name() {
+		return "copa pistão";
+	}
 };
 
 class Spawn : public Lane {
@@ -37,3 +49,5 @@ public:
 		addCar(car);
 	}
 };
+
+#endif
