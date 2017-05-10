@@ -130,7 +130,9 @@ public:
 		std::string parts[7];
 		output << time_.to_string() << " ";
 
-		if (event_ == car_enter_lane) {
+		switch (event_) {
+		case (car_enter_lane):
+		{
 			std::string from_str, to_str;
 			if (extra_.from == nullptr) {
 				from_str = "o nada";
@@ -144,15 +146,67 @@ public:
 			}
 			output << "Carro " << object_.car->name() << " vindo d"
 					<< from_str << " foi para " << to_str << ".";
-		} else if (event_ == car_enter_queue) {
+			break;
+		}
+		case (car_enter_queue):
+		{
 			output << "Carro " << object_.car->name() << " entrou na sua fila " << extra_.from->name() << ".";
-		} else if (event_ == light_switch) {
+			break;
+		}
+		case (light_switch):
+		{
 			std::string color = extra_.to_green ? "verde" : "vermelho";
 			output << "Semáforo " << object_.light->name() << " mudou sua cor para " << color << ".";
-		} else {
+			break;
+		}
+		default:
+		{
 			throw "Tipo inválido de evento";
+			break;
+		}
 		}
 		return output.str();
+	}
+
+	/** Realiza o evento.
+	 *
+	 */
+	void run () {
+		switch (event_) {
+		{
+		case (car_enter_lane):
+			if (extra_.from != nullptr) { //se não foi spawn
+				extra_.from->removeCar();
+			}
+			if (extra_.to == nullptr) { //se despawn
+				delete object_.car;
+			} else {
+				extra_.to->add_car(object_.car);
+			}
+		break;
+		}
+		case (car_enter_queue):
+		{
+			extra_.to->push_car(object_.car);
+			break;
+		}
+		case (light_switch):
+		{
+			if (object_.light->get_closed() == extra_.to_green) {
+				throw "Cor do semáforo inconsistente";
+			}
+			object_.light->switch_light();
+			break;
+		}
+		default:
+		{
+		throw "Tipo inválido de evento";
+		}
+		}
+	}
+
+	utility::Simple_time get_time () {
+		return time_;
 	}
 };
 

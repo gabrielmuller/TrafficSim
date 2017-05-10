@@ -6,7 +6,7 @@
 
 class Lane {
 private:
-	structures::LinkedQueue<Car> queue;
+	structures::LinkedQueue<Car*> queue;
 	int velocity_, size_, freeSpace_;
 public:
 	Lane() {
@@ -19,16 +19,16 @@ public:
 		size_ = size;
 	}
 
-	void addCar(Car car) {
-		if (car.size() <= freeSpace_) {
+	void add_car(Car* car) {
+		if (car->size() <= freeSpace_) {
 			queue.enqueue(car);
-			freeSpace_ -= car.size();
+			freeSpace_ -= car->size();
 		}
 	}
 
-	Car removeCar() {
-		Car car = queue.dequeue();
-		freeSpace_ += car.size();
+	Car* removeCar() {
+		Car* car = queue.dequeue();
+		freeSpace_ += car->size();
 		return car;
 	}
 
@@ -39,14 +39,18 @@ public:
 	std::string name() {
 		return "copa pistão";
 	}
+
+	void push_car(Car* car) {
+		queue.enqueue(car);
+	}
 };
 
 class Spawn : public Lane {
 private:
 public:
 	void createCar() {
-		Car car;
-		addCar(car);
+		Car* car = new Car();
+		add_car(car);
 	}
 };
 

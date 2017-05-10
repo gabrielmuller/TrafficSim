@@ -21,6 +21,14 @@ public:
 	std::string name() {
 		return "pisca pisca";
 	}
+
+	void switch_light() {
+		closed_ = !closed_;
+	}
+
+	bool get_closed() {
+		return closed_;
+	}
 };
 
 #endif
