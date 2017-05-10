@@ -1,26 +1,27 @@
 #ifndef TRAFFIC_LIGHT_CPP_
 #define TRAFFIC_LIGHT_CPP_
 
-#include <Lane.cpp>
 #include "array_list.h"
+
+enum direction {NORTH, SOUTH, EAST, WEST};
 
 class Traffic_light {
 private:
-	structures::ArrayList<Lane*>* exit_lanes_;
-	Lane* self_lane_;
-	int* probabilities_;
-	bool closed_;
+	direction direction_ = NORTH;
+
 public:
 	Traffic_light() {
 
-	}
-	Traffic_light(Lane* exit_lanes, Lane* self_lane, int* probabilities) {
-		
 	}
 
 	std::string name() {
 		return "pisca pisca";
 	}
+
+	direction direction() {
+		return direction_;
+	}
+
 };
 
 #endif
