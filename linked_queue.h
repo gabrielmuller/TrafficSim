@@ -1,7 +1,7 @@
 // Copyright 2017 Juliana Silva Pinheiro
 
-#ifndef STRUCTURES_LINKED_LIST_H
-#define STRUCTURES_LINKED_LIST_H
+#ifndef STRUCTURES_LINKED_QUEUE_H
+#define STRUCTURES_LINKED_QUEUE_H
 
 #include <cstdint>  // std::size_t
 #include <stdexcept>  // C++ Exceptions

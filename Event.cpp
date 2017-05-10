@@ -2,10 +2,9 @@
 #define EVENT_CPP_
 
 #include <sstream>
-#include <clock.h>
 #include <Car.cpp>
 #include <Traffic_light.cpp>
-#include <Lane.cpp>
+#include <simple_time.h>
 /** Usado como valor nulo para structs
  *
  */
@@ -65,7 +64,7 @@ struct relevant_obj {
 class Event {
 private:
 	event_type event_; /**< tipo do evento */
-	utility::Clock time_; /**< tempo em que o evento ocorreu */
+	utility::Simple_time time_; /**< tempo em que o evento ocorreu */
 
 	relevant_obj object_; /**< objeto que participa do evento */
 	extra_info extra_; /**< informação adicional */
@@ -77,7 +76,7 @@ public:
 	 *	\param from pista origem
 	 *	\param to pista destino
 	 */
-	Event (utility::Clock time, Car* car, Lane* from, Lane* to) {
+	Event (utility::Simple_time time, Car* car, Lane* from, Lane* to) {
 		event_ = car_enter_lane;
 		time_ = time;
 		object_ = *(new relevant_obj());
@@ -92,7 +91,7 @@ public:
 	 *  \param car carro
 	 *  \param current pista atual do carro
 	 */
-	Event (utility::Clock time, Car* car, Lane* current) {
+	Event (utility::Simple_time time, Car* car, Lane* current) {
 		event_ = car_enter_queue;
 		time_ = time;
 		object_ = *(new relevant_obj());
@@ -107,13 +106,20 @@ public:
 	 *  \param light semáforo
 	 *  \param to_green mudou para verde?
 	 */
-	Event (utility::Clock time, Traffic_light* light, bool to_green) {
+	Event (utility::Simple_time time, Traffic_light* light, bool to_green) {
 		event_ = light_switch;
 		time_ = time;
 		object_ = *(new relevant_obj());
 		object_.light = light;
 		extra_ = *(new extra_info());
 		extra_.to_green = to_green;
+	}
+
+	/** Um evento aconteceu antes do outro?
+	 *  \return true se lado esquerdo aconteceu antes do direito
+	 */
+	bool operator< (const Event other) const {
+		return time_ < other.time_;
 	}
 
 	/** Representação em string do evento.
@@ -124,7 +130,9 @@ public:
 		std::string parts[7];
 		output << time_.to_string() << " ";
 
-		if (event_ == car_enter_lane) {
+		switch (event_) {
+		case (car_enter_lane):
+		{
 			std::string from_str, to_str;
 			if (extra_.from == nullptr) {
 				from_str = "o nada";
@@ -138,15 +146,67 @@ public:
 			}
 			output << "Carro " << object_.car->name() << " vindo d"
 					<< from_str << " foi para " << to_str << ".";
-		} else if (event_ == car_enter_queue) {
+			break;
+		}
+		case (car_enter_queue):
+		{
 			output << "Carro " << object_.car->name() << " entrou na sua fila " << extra_.from->name() << ".";
-		} else if (event_ == light_switch) {
+			break;
+		}
+		case (light_switch):
+		{
 			std::string color = extra_.to_green ? "verde" : "vermelho";
 			output << "Semáforo " << object_.light->name() << " mudou sua cor para " << color << ".";
-		} else {
+			break;
+		}
+		default:
+		{
 			throw "Tipo inválido de evento";
+			break;
+		}
 		}
 		return output.str();
+	}
+
+	/** Realiza o evento.
+	 *
+	 */
+	void run () {
+		switch (event_) {
+		{
+		case (car_enter_lane):
+			if (extra_.from != nullptr) { //se não foi spawn
+				extra_.from->removeCar();
+			}
+			if (extra_.to == nullptr) { //se despawn
+				delete object_.car;
+			} else {
+				extra_.to->add_car(object_.car);
+			}
+		break;
+		}
+		case (car_enter_queue):
+		{
+			extra_.to->push_car(object_.car);
+			break;
+		}
+		case (light_switch):
+		{
+			if (object_.light->get_closed() == extra_.to_green) {
+				throw "Cor do semáforo inconsistente";
+			}
+			object_.light->switch_light();
+			break;
+		}
+		default:
+		{
+		throw "Tipo inválido de evento";
+		}
+		}
+	}
+
+	utility::Simple_time get_time () {
+		return time_;
 	}
 };
 

@@ -22,6 +22,13 @@ public:
 		return direction_;
 	}
 
+	void switch_light() {
+		closed_ = !closed_;
+	}
+
+	bool get_closed() {
+		return closed_;
+	}
 };
 
 #endif

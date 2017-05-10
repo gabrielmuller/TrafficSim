@@ -9,13 +9,14 @@ enum direction {NORTH, SOUTH, EAST, WEST};
 
 class Lane {
 private:
+
 	Traffic_light& light_;
 	direction direction_;
 	int* probabilities_;  // [0] left, [1] right
 	structures::LinkedQueue<Car*> queue;
 	int velocity_ = 0, size_ = 0, freeSpace_ = 0;
 	static int totalIn_ = 0, totalOut_ = 0;
-
+  
 public:
 
 	Lane(Traffic_light& light, direction dir, int* probabilities, int velocity, int size) {
@@ -30,6 +31,7 @@ public:
 	void addCar(Car car) {
 		if (car.size() >= freeSpace_) {
 			throw std::runtime_error("Full lane");
+
 		}
 		queue.enqueue(&car);
 		freeSpace_ -= car.size();
@@ -40,6 +42,7 @@ public:
 		Car car = queue.dequeue();
 		freeSpace_ += car.size();
 		++totalOut_;
+
 		return car;
 	}
 
@@ -52,11 +55,12 @@ public:
 	}
 
 	std::string name() {
-		return "copa pist„o";
+		return "copa pist√£o";
 	}
 
 	int timeTaken() {
 		return size_ / velocity_ / 3.6;
+
 	}
 };
 
@@ -65,8 +69,8 @@ private:
 	Lane &leftExit, &straightExit, &rightExit;
 public:
 	void createCar() {
-		Car car;
-		addCar(car);
+		Car* car = new Car();
+		add_car(car);
 	}
 
 	Lane& moveCar() {
