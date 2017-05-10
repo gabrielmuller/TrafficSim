@@ -2,10 +2,9 @@
 #define EVENT_CPP_
 
 #include <sstream>
-#include <clock.h>
 #include <Car.cpp>
 #include <Traffic_light.cpp>
-#include <Lane.cpp>
+#include <simple_time.h>
 /** Usado como valor nulo para structs
  *
  */
@@ -65,7 +64,7 @@ struct relevant_obj {
 class Event {
 private:
 	event_type event_; /**< tipo do evento */
-	utility::Clock time_; /**< tempo em que o evento ocorreu */
+	utility::Simple_time time_; /**< tempo em que o evento ocorreu */
 
 	relevant_obj object_; /**< objeto que participa do evento */
 	extra_info extra_; /**< informação adicional */
@@ -77,7 +76,7 @@ public:
 	 *	\param from pista origem
 	 *	\param to pista destino
 	 */
-	Event (utility::Clock time, Car* car, Lane* from, Lane* to) {
+	Event (utility::Simple_time time, Car* car, Lane* from, Lane* to) {
 		event_ = car_enter_lane;
 		time_ = time;
 		object_ = *(new relevant_obj());
@@ -92,7 +91,7 @@ public:
 	 *  \param car carro
 	 *  \param current pista atual do carro
 	 */
-	Event (utility::Clock time, Car* car, Lane* current) {
+	Event (utility::Simple_time time, Car* car, Lane* current) {
 		event_ = car_enter_queue;
 		time_ = time;
 		object_ = *(new relevant_obj());
@@ -107,13 +106,20 @@ public:
 	 *  \param light semáforo
 	 *  \param to_green mudou para verde?
 	 */
-	Event (utility::Clock time, Traffic_light* light, bool to_green) {
+	Event (utility::Simple_time time, Traffic_light* light, bool to_green) {
 		event_ = light_switch;
 		time_ = time;
 		object_ = *(new relevant_obj());
 		object_.light = light;
 		extra_ = *(new extra_info());
 		extra_.to_green = to_green;
+	}
+
+	/** Um evento aconteceu antes do outro?
+	 *  \return true se lado esquerdo aconteceu antes do direito
+	 */
+	bool operator< (const Event other) const {
+		return time_ < other.time_;
 	}
 
 	/** Representação em string do evento.

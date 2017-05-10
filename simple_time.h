@@ -1,12 +1,5 @@
-/*
- * time_format.h
- *
- *  Created on: 7 de mai de 2017
- *      Author: gabri
- */
-
-#ifndef CLOCK_H_
-#define CLOCK_H_
+#ifndef SIMPLE_TIME_H_
+#define SIMPLE_TIME_H_
 
 #include <string>
 #include <sstream>
@@ -19,7 +12,7 @@ namespace utility {
  * Armazena tempo em milissegundos, com operações e conversões.
  */
 
-class Clock {
+class Simple_time {
 
 private:
 	unsigned int milli_;
@@ -28,13 +21,13 @@ public:
 	/** Construtor padrão.
 	 *
 	 */
-	Clock() {
+	Simple_time() {
 		milli_ = 0;
 	}
 	/** Construtor.
 	 * \param milli tempo em milissegundos.
 	 */
-	Clock(unsigned int milli) {
+	Simple_time(unsigned int milli) {
 		milli_ = milli % MILLIS_IN_DAY;
 	}
 
@@ -60,31 +53,34 @@ public:
 	 * \param milli inteiro com sinal a adicionar.
 	 * \return tipo Clock com o valor de tempo resultante.
 	 */
-	Clock operator+ (int milli) {
-		Clock c =  *(new Clock (milli));
+	Simple_time operator+ (int milli) {
+		Simple_time c =  *(new Simple_time (milli));
 		milli = milli % MILLIS_IN_DAY;
 		c.milli_ = (milli + milli_) % MILLIS_IN_DAY;
 		return c;
 
 	}
 
-	Clock operator-(int milli) {
+	Simple_time operator-(int milli) {
 		return *this + (-milli);
 	}
 
 	/** Soma dois Clocks.
 	 *
 	 */
-	Clock operator+ (Clock other) {
+	Simple_time operator+ (Simple_time other) {
 		unsigned int a, b, sum;
 		a = this->milli_;
 		b = other.milli_;
 		sum = (a + b) % MILLIS_IN_DAY;
-		return *(new Clock(sum));
+		return *(new Simple_time(sum));
 	}
 
+	bool operator< (const Simple_time other) const {
+		return milli_ < other.milli_;
+	}
 };
 
 }
 
-#endif /* CLOCK_H_ */
+#endif /* SIMPLE_TIME_H_ */
