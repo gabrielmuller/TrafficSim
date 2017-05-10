@@ -9,21 +9,17 @@
 class Lane {
 protected:
 
-	Traffic_light& light_;
+	Traffic_light* light_;
 	direction direction_;
-	int* probabilities_;  				// [0] left, [1] right
+	int* probabilities_;  				// [0] left, [1] straight, [2] right
 	int velocity_, size_, freeSpace_;
 
 	int totalIn_ = 0, totalOut_ = 0;
-	static const int systemIn, sistemOut_;
 	structures::LinkedQueue<Car*> queue;
   
 public:
 
-	systemIn = 0;
-	systemOut = 0;
-
-	Lane(Traffic_light& light, direction dir, int* prob, int vel, int size):
+	Lane(Traffic_light *light, direction dir, int* prob, int vel, int size):
 		light_(light),
 		direction_(dir),
 		probabilities_(prob),
@@ -32,21 +28,20 @@ public:
 		freeSpace_(size)
 	{}
 
-	void addCar(Car car) {
-		if (car.size() >= freeSpace_) {
+	void addCar(Car* car) {
+		if (car->size() >= freeSpace_) {
 			throw std::runtime_error("Full lane");
 		}
 
-		queue.enqueue(&car);
-		freeSpace_ -= car.size();
+		queue.enqueue(car);
+		freeSpace_ -= car->size();
 		++totalIn_;
 	}
 
-	Car removeCar() {
-		Car car = queue.dequeue();
-		freeSpace_ += car.size();
+	Car* removeCar() {
+		Car* car = queue.dequeue();
+		freeSpace_ += car->size();
 		++totalOut_;
-
 		return car;
 	}
 
@@ -65,27 +60,22 @@ public:
 
 class Spawn : public Lane {
 private:
-	Lane &rightExit, &straightExit, &leftExit;
 	int fixedFreq, varFreq;
+	Lane *rightExit, *straightExit, *leftExit;
 public:
-	Spawn(Traffic_light& light, direction dir, int* prob, int vel, int size, int ff, int vf, Lane& r, Lane& s, Lane& l):
-			light_(light),
-			direction_(dir),
-			probabilities_(prob),
-			velocity_(vel),
-			size_(size),
-			freeSpace_(size),
-			fixedFreq(ff), varFreq(vf),
-			rightExit(r), straightExit(s), leftExit(l)
-		{}
+	Spawn(Traffic_light* light, direction dir, int* prob, int vel, int size, int ff, int vf, Lane* r, Lane* s, Lane* l):
+		Lane(light, dir, prob, vel, size),
+		fixedFreq(ff - vf), varFreq(2*vf),
+		rightExit(r), straightExit(s), leftExit(l)
+	{}
 
 	void createCar() {
-		Car car = new Car();
+		Car* car;
 		addCar(car);
 	}
 
-	Lane& moveCar() {
-		if (light_.direction() != direction) {
+	Lane* moveCar() {
+		if (light_->direction() != direction_) {
 			throw std::runtime_error("Traffic light's red");
 		}
 
@@ -94,13 +84,13 @@ public:
 		int r = rand() % 100;
 
 		if (r < probabilities_[0]) {
-			leftExit.addCar(car);
+			leftExit->addCar(car);
 			return leftExit;
-		} else if (r > probabilities_[1]) {
-			rightExit.addCar(car);
+		} else if (r < probabilities_[0] + probabilities_[1]) {
+			rightExit->addCar(car);
 			return rightExit;
 		} else {
-			straightExit.addCar(car);
+			straightExit->addCar(car);
 			return straightExit;
 		}
 	}
@@ -112,20 +102,15 @@ public:
 
 class CentralLane : public Lane {
 private:
-	Lane &rightExit, &straightExit, &leftExit;
+	Lane *rightExit, *straightExit, *leftExit;
 public:
-	CentralLane(Traffic_light& light, direction dir, int* prob, int vel, int size, Lane& r, Lane& s, Lane& l):
-			light_(light),
-			direction_(dir),
-			probabilities_(prob),
-			velocity_(vel),
-			size_(size),
-			freeSpace_(size),
-			rightExit(r), straightExit(s), leftExit(l)
-		{}
+	CentralLane(Traffic_light* light, direction dir, int* prob, int vel, int size, Lane* r, Lane* s, Lane* l):
+		Lane(light, dir, prob, vel, size),
+		rightExit(r), straightExit(s), leftExit(l)
+	{}
 
-	Lane& moveCar() {
-		if (light_.direction() != direction) {
+	Lane* moveCar() {
+		if (light_->direction() != direction_) {
 			throw std::runtime_error("Traffic light's red");
 		}
 
@@ -134,13 +119,13 @@ public:
 		int r = rand() % 100;
 
 		if (r < probabilities_[0]) {
-			leftExit.addCar(car);
+			leftExit->addCar(car);
 			return leftExit;
-		} else if (r > probabilities_[1]) {
-			rightExit.addCar(car);
+		} else if (r < probabilities_[0] + probabilities_[1]) {
+			rightExit->addCar(car);
 			return rightExit;
 		} else {
-			straightExit.addCar(car);
+			straightExit->addCar(car);
 			return straightExit;
 		}
 	}
@@ -148,13 +133,8 @@ public:
 
 class Edge : public Lane {
 public:
-	Edge(Traffic_light& light, direction dir, int* prob, int vel, int size):
-		light_(light),
-		direction_(dir),
-		probabilities_(prob),
-		velocity_(vel),
-		size_(size),
-		freeSpace_(size)
+	Edge(Traffic_light* light, direction dir, int* prob, int vel, int size):
+		Lane(light, dir, prob, vel, size)
 	{}
 };
 

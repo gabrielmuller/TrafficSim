@@ -1,9 +1,9 @@
-#include "linked_list.h"
 #include <string>
 #include <iostream>
 #include <sstream>
-#include <Event.cpp>
-#include <simple_time.h>
+#include "Event.cpp"
+#include "linked_list.h"
+#include "simple_time.h"
 
 #ifndef CLOCK_CPP_
 #define CLOCK_CPP_

@@ -6,6 +6,7 @@
 #include "Car.cpp"
 #include "Traffic_light.cpp"
 #include "simple_time.h"
+
 /** Usado como valor nulo para structs
  *
  */
@@ -182,13 +183,13 @@ public:
 			if (extra_.to == nullptr) { //se despawn
 				delete object_.car;
 			} else {
-				extra_.to->add_car(object_.car);
+				extra_.to->addCar(object_.car);
 			}
 		break;
 		}
 		case (car_enter_queue):
 		{
-			extra_.to->push_car(object_.car);
+			extra_.to->addCar(object_.car); // Tava push_car, mas não implementei dois metodos diferentes. Pode mudar
 			break;
 		}
 		case (light_switch):

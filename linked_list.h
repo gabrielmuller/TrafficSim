@@ -33,7 +33,7 @@ class LinkedList {
     if (!empty()) {
       Node* prev = head;
       Node* next;
-      for (int i = 0; i < size(); i++) {
+      for (std::size_t i = 0; i < size(); i++) {
         next = prev->next();
         delete prev;
         prev = next;
@@ -79,7 +79,7 @@ class LinkedList {
         throw std::out_of_range("Lista cheia");
       }
       Node* it = head;
-      for (int i = 0; i < index - 1; i++) {
+      for (std::size_t i = 0; i < index - 1; i++) {
         it = it->next();
       }
       node->next(it->next());
@@ -93,7 +93,7 @@ class LinkedList {
    */
   void insert_sorted(const T& data) {
     Node* it = head;
-    int i;
+    std::size_t i;
     for (i = 0; i < size(); i++) {
       if (data < it->data()) {
         insert(data, i);
@@ -138,7 +138,7 @@ class LinkedList {
     }
 
     Node* it = head;
-    for (int i = 1; i < index; i++) {
+    for (std::size_t i = 1; i < index; i++) {
       it = it->next();
     }
     size_--;
@@ -214,7 +214,7 @@ class LinkedList {
   std::string to_string() {
 	  Node* it = head;
 	  std::ostringstream output;
-	  for (int i = 0; i < size_; i++) {
+	  for (std::size_t i = 0; i < size_; i++) {
 		  output << it->data().to_string() << std::endl;
 		  it = it->next();
 	  }

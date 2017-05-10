@@ -1,14 +1,14 @@
 #include <iostream>
-#include <clock.h>
-#include <random.h>
-#include <Car.cpp>
-#include <Lane.cpp>
-#include <Event.cpp>
+#include "Clock.cpp"
+#include "random.h"
+#include "Car.cpp"
+#include "Lane.cpp"
+#include "Event.cpp"
 
 int main(int argc, char* argv[]) {
 	using namespace utility;
 
-	std::cout << "AAAAAAAAAAAAAAAAAAA" << '\n';
+	std::cout << "meu deus compilou!!!!!!!!!!!" << '\n';
 
 	/*Clock c = *(new Clock(3605500));
 	Clock d = *(new Clock(7200000));

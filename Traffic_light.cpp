@@ -8,7 +8,7 @@ enum direction {NORTH, SOUTH, EAST, WEST};
 class Traffic_light {
 private:
 	direction direction_ = NORTH;
-
+	bool closed_ = false; // Coloquei só porque Event ta usando metodos com closed, é pra mudar
 public:
 	Traffic_light() {
 
@@ -31,13 +31,13 @@ public:
 		}
 	}
 
-	/*void switch_light() {
+	void switch_light() {
 		closed_ = !closed_;
 	}
 
 	bool get_closed() {
 		return closed_;
-	}*/
+	}
 };
 
 #endif
