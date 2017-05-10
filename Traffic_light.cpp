@@ -22,13 +22,22 @@ public:
 		return direction_;
 	}
 
-	void switch_light() {
+	void changeDirection() {
+		switch(direction_) {
+			case NORTH: direction_ = EAST; break;
+			case EAST: direction_ = SOUTH; break;
+			case SOUTH: direction_ = WEST; break;
+			case WEST: direction_ = NORTH; break;
+		}
+	}
+
+	/*void switch_light() {
 		closed_ = !closed_;
 	}
 
 	bool get_closed() {
 		return closed_;
-	}
+	}*/
 };
 
 #endif
